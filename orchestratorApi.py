@@ -1,15 +1,17 @@
 import requests
 import os
 import json
+from dotenv import load_dotenv
 
-# TODO
+# TODO: Test
 # load client secret and id from .env
-clientID = ''
-clientSecret = ''
+load_env()
+clientID = os.getenv('CLIENT_ID')
+clientSecret = os.getenv('CLIENT_SECRET')
 
 KEY_FILE = "key.pem"
-ORCHESTRATOR_URL = ""
-AUTHENTICATION_URL = "https://cloud.uipath.com/identity_/connect/authorize"
+ORCHESTRATOR_URL = "https://cloud.uipath.com/tehri/default/orchestrator_"
+AUTHENTICATION_URL = "https://account.uipath.com/oauth/token"
 
 
 def read_key():
@@ -22,13 +24,13 @@ def read_key():
 
 
 def authenticate():
-    # TODO: correct parameter as per actual authentication request
-    headers = {"accept": "application/json",
-               'clientId': clientID, 'client_secret': clientSecret}
-    response = requests.post(AUTHENTICATION_URL, headers=headers)
-    if response.status_code == 204:
+    # TODO: test correct parameter as per actual authentication request
+    headers = {"accept": "application/json","X-UIPATH-TenantName":"default"}
+    payload={'grant_type':'refresh_token','client_id': clientID, 'refresh_token': clientSecret}
+    response = requests.post(AUTHENTICATION_URL, headers=headers,data=payload)
+    if response.status_code == 200:
         jsonresponse = json.loads(response.text)
-        key = jsonresponse['token']
+        key = jsonresponse['access_token']
         with open(KEY_FILE, 'w') as f:
             f.write(key)
     else:
@@ -36,9 +38,10 @@ def authenticate():
 
 
 def add_transaction(payload):
-    # TODO: correct parameter as per actual authentication request
+    # TODO: test correct parameter as per actual authentication request
     key = read_key()
-    headers = {"accept": "application/json", "authorization": f"Bearer {key}"}
+    url=f'{ORCHESTRATOR_URL}/odata/Queues/UiPathDataSvc.AddQueueItem'
+    headers = {"accept": "application/json", "authorization": f"Bearer {key}","X-UIPATH-OrganizationUnitId":"810777"}
     response = requests.post(ORCHESTRATOR_URL, headers=headers, data=payload)
     print(response)
     if response.status_code == 401:
