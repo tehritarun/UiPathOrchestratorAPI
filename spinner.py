@@ -8,13 +8,14 @@ class CLI_Spinner:
         self.speed = speed
 
         self.process = multiprocessing.Process(
-            target=self.spin, args=(), name="CLI Spinner")
+            target=self.spin, args=(), name="CLI Spinner"
+        )
 
     def spin(self):
-        spinner = ['-', '\\', '|', '/']
+        spinner = ["-", "\\", "|", "/"]
         n = 0
         while True:
-            print(f'\r{spinner[n]} {self.message}', end='')
+            print(f"\r{spinner[n]} {self.message}", end="")
             n += 1
             if n >= len(spinner):
                 n = 0

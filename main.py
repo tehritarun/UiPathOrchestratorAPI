@@ -2,6 +2,7 @@ import json
 import os
 from spinner import CLI_Spinner
 import time
+import orchestratorApi
 
 
 def get_dict(items: list):
@@ -13,7 +14,7 @@ def get_dict(items: list):
 
 def getInput(options: dict, prompt: str):
     s = ""
-    os.system('cls')
+    os.system("cls")
     promptstr = f"{s:-^40}\n|{prompt:^38}|\n{s:-^40}"
     print(promptstr)
     for key, option in options.items():
@@ -32,6 +33,7 @@ def getFiles(process):
     for _, _, files in os.walk(f"input\\{process}"):
         for file in files:
             with open(f"input\\{process}\\{file}") as f:
+                # TODO: add wrapper json for adding transaction body
                 data = json.load(f)
                 yield ((file, data))
 
@@ -61,13 +63,14 @@ def main():
         elif page == 2:
             choice = getInput(filedata[processChoice], "Select Transacrion")
             choice = filedata[processChoice][choice]
-            # TODO: implement multiple selecction here
+            # TODO: implement multiple selection here
             # TODO: implement special options here
             print(transationdata[choice])
-            spinner = CLI_Spinner("Adding Transactio to queue", speed=0.1)
+            spinner = CLI_Spinner("Adding Transaction to queue", speed=0.1)
             spinner.start()
+            # TODO: TEST: implement orchestrator functions here
+            orchestratorApi.add_transaction(transationdata[choice])
             time.sleep(5)
-            # TODO: implement orchestrator functions here
             spinner.stop()
 
 
