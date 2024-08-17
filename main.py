@@ -3,6 +3,7 @@ import os
 from spinner import CLI_Spinner
 import time
 import orchestratorApi
+import subprocess
 
 
 def get_dict(items: list):
@@ -14,7 +15,7 @@ def get_dict(items: list):
 
 def getInput(options: dict, prompt: str):
     s = ""
-    os.system("cls")
+    subprocess.run("clear")
     promptstr = f"{s:-^40}\n|{prompt:^38}|\n{s:-^40}"
     print(promptstr)
     for key, option in options.items():
@@ -51,27 +52,59 @@ def load_data():
     return (get_dict(processes), filedata, transactiondata)
 
 
+def handle_input(choice: str, data: dict):
+    validinput = True
+    selections = []
+    for c in choice.split(","):
+        if c.isnumeric() and c in data.keys():
+            selections.append(data[c])
+        else:
+            validinput = False
+    if validinput:
+        return selections
+    elif choice.lower().strip() == "q":
+        quit()
+    elif choice.lower().strip() == "b":
+        return "back"
+    else:
+        return "invalid input"
+
+
 def main():
     processdata, filedata, transationdata = load_data()
     print(transationdata)
     page = 1
+    message = "Select a process/queue"
     while True:
         if page == 1:
-            processChoice = getInput(processdata, "Select a process")
-            processChoice = processdata[processChoice]
-            page = 2
+            processChoice = getInput(processdata, message)
+            if processChoice in processdata.keys():
+                processChoice = processdata[processChoice]
+                page = 2
+                message = "Select Transaction"
+            elif processChoice.lower().strip() == "q":
+                quit()
+            else:
+                message = "Invalid input"
         elif page == 2:
-            choice = getInput(filedata[processChoice], "Select Transacrion")
-            choice = filedata[processChoice][choice]
-            # TODO: implement multiple selection here
-            # TODO: implement special options here
-            print(transationdata[choice])
-            spinner = CLI_Spinner("Adding Transaction to queue", speed=0.1)
-            spinner.start()
-            # TODO: TEST: implement orchestrator functions here
-            orchestratorApi.add_transaction(transationdata[choice])
-            time.sleep(5)
-            spinner.stop()
+            choice = getInput(filedata[processChoice], message)
+            # choice = filedata[processChoice][choice]
+            selections = handle_input(choice, filedata[processChoice])
+            # TODO: TEST: implement multiple selection here
+            # TODO: TEST: implement special options here
+            if type(selections) is list:
+                spinner = CLI_Spinner("Adding Transaction to queue", speed=0.1)
+                spinner.start()
+                for selection in selections:
+                    print(transationdata[selection])
+                    # TODO: TEST: implement orchestrator functions here
+                    # orchestratorApi.add_transaction(transationdata[selection])
+                    time.sleep(2)
+                spinner.stop()
+            elif selections == "back":
+                page = 1
+            else:
+                message = selections
 
 
 if __name__ == "__main__":
