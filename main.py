@@ -31,12 +31,18 @@ def get_processes():
 
 
 def getFiles(process):
-    for _, _, files in os.walk(f"input\\{process}"):
+    for _, _, files in os.walk(os.path.join("input", process)):
         for file in files:
-            with open(f"input\\{process}\\{file}") as f:
-                # TODO: add wrapper json for adding transaction body
+            with open(os.path.join("input", process, file)) as f:
+                # TODO: TEST:add wrapper json for adding transaction body
                 data = json.load(f)
-                yield ((file, data))
+                payloaddata = {
+                    "name": process,
+                    "reference": file,
+                    "specificContent": data,
+                    "priority": "normal",
+                }
+                yield ((file, payloaddata))
 
 
 def load_data():
@@ -96,9 +102,10 @@ def main():
                 spinner = CLI_Spinner("Adding Transaction to queue", speed=0.1)
                 spinner.start()
                 for selection in selections:
-                    print(transationdata[selection])
+                    payloadstr = json.dumps(transationdata[selection])
+                    print(payloadstr)
                     # TODO: TEST: implement orchestrator functions here
-                    # orchestratorApi.add_transaction(transationdata[selection])
+                    orchestratorApi.add_transaction(payloadstr)
                     time.sleep(2)
                 spinner.stop()
             elif selections == "back":
