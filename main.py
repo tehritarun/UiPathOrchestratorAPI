@@ -13,13 +13,17 @@ def get_dict(items: list):
     return result
 
 
-def getInput(options: dict, prompt: str):
+def getInput(options: dict, prompt: str, page: int):
     s = ""
     subprocess.run("clear")
     promptstr = f"{s:-^40}\n|{prompt:^38}|\n{s:-^40}"
     print(promptstr)
     for key, option in options.items():
         print(f"{key}. {option}")
+    if page == 2:
+        print("a. add all items")
+        print("b. back")
+    print("q. quit")
     print(f"{s:-^40}")
     return input("Select a Option: ")
 
@@ -61,6 +65,8 @@ def load_data():
 def handle_input(choice: str, data: dict):
     validinput = True
     selections = []
+    if choice.lower().strip() == "a":
+        choice = ",".join(data.keys())
     for c in choice.split(","):
         if c.isnumeric() and c in data.keys():
             selections.append(data[c])
@@ -83,7 +89,7 @@ def main():
     message = "Select a process/queue"
     while True:
         if page == 1:
-            processChoice = getInput(processdata, message)
+            processChoice = getInput(processdata, message, page)
             if processChoice in processdata.keys():
                 processChoice = processdata[processChoice]
                 page = 2
@@ -93,7 +99,7 @@ def main():
             else:
                 message = "Invalid input"
         elif page == 2:
-            choice = getInput(filedata[processChoice], message)
+            choice = getInput(filedata[processChoice], message, page)
             # choice = filedata[processChoice][choice]
             selections = handle_input(choice, filedata[processChoice])
             # TODO: TEST: implement multiple selection here
@@ -105,7 +111,7 @@ def main():
                     payloadstr = json.dumps(transationdata[selection])
                     print(payloadstr)
                     # TODO: TEST: implement orchestrator functions here
-                    orchestratorApi.add_transaction(payloadstr)
+                    # orchestratorApi.add_transaction(payloadstr)
                     time.sleep(2)
                 spinner.stop()
             elif selections == "back":
