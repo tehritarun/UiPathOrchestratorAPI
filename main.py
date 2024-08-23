@@ -37,16 +37,24 @@ def get_processes():
 def getFiles(process):
     for _, _, files in os.walk(os.path.join("input", process)):
         for file in files:
-            with open(os.path.join("input", process, file)) as f:
-                # TODO: TEST:add wrapper json for adding transaction body
-                data = json.load(f)
-                payloaddata = {
-                    "name": process,
-                    "reference": file,
-                    "specificContent": data,
-                    "priority": "normal",
-                }
-                yield ((file, payloaddata))
+            if not file.lower().endswith(".json"):
+                continue
+            filename = os.path.join("input", process, file)
+
+            try:
+                with open(filename, 'r') as f:
+                    # TODO: TEST:add wrapper json for adding transaction body
+                    data = json.load(f)
+            except Exception as e:
+                process(e)
+                continue
+            payloaddata = {
+                "name": process,
+                "reference": file,
+                "specificContent": data,
+                "priority": "normal",
+            }
+            yield ((file, payloaddata))
 
 
 def load_data():
