@@ -111,7 +111,7 @@ def main():
                     payloadstr = json.dumps(transationdata[selection])
                     print(payloadstr)
                     # TODO: TEST: implement orchestrator functions here
-                    # orchestratorApi.add_transaction(payloadstr)
+                    orchestratorApi.add_transaction(payloadstr)
                     time.sleep(2)
                 spinner.stop()
             elif selections == "back":
