@@ -7,10 +7,12 @@ from dotenv import load_dotenv
 load_dotenv()
 clientID = os.getenv("CLIENT_ID")
 clientSecret = os.getenv("USER_KEY")
+tanent = os.getenv("TANENT")
+instanceName = os.getenv("INSTANCE_NAME")
 
 KEY_FILE = "key.pem"
 # ORCHESTRATOR_URL = "https://cloud.uipath.com/tehri/DefaultTenant/orchestrator_"
-ORCHESTRATOR_URL = "https://cloud.uipath.com/tehri/DefaultTenant/orchestrator_"
+ORCHESTRATOR_URL = f"https://cloud.uipath.com/{instanceName}/{tanent}/orchestrator_"
 AUTHENTICATION_URL = "https://account.uipath.com/oauth/token"
 
 
@@ -59,7 +61,8 @@ def add_transaction(payload):
     if response.status_code == 401:
         authenticate()
         key = read_key()
-        response = requests.post(ORCHESTRATOR_URL, headers=headers, data=payload)
+        response = requests.post(
+            ORCHESTRATOR_URL, headers=headers, data=payload)
     return response.status_code
 
 
