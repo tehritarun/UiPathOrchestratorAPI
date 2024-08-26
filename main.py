@@ -48,12 +48,12 @@ def getFiles(process):
             except Exception as e:
                 process(e)
                 continue
-            payloaddata = {
-                "name": process,
-                "reference": file,
-                "specificContent": data,
-                "priority": "normal",
-            }
+            payloaddata = {"itemData": {
+                "Name": process,
+                "Reference": file,
+                "SpecificContent": data,
+                "Priority": "Normal",
+            }}
             yield ((file, payloaddata))
 
 

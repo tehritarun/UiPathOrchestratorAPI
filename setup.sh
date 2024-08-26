@@ -2,7 +2,7 @@
 
 # input for setting .env file
 
-envfilename=".testenv"
+envfilename=".env"
 
 echo "Enter instance name: "
 read -r instance

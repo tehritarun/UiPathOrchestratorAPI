@@ -11,8 +11,8 @@ tanent = os.getenv("TANENT")
 instanceName = os.getenv("INSTANCE_NAME")
 
 KEY_FILE = "key.pem"
-# ORCHESTRATOR_URL = "https://cloud.uipath.com/tehri/DefaultTenant/orchestrator_"
-ORCHESTRATOR_URL = f"https://cloud.uipath.com/{instanceName}/{tanent}/orchestrator_"
+ORCHESTRATOR_URL = f"https://cloud.uipath.com/{
+    instanceName}/{tanent}/ochestrator_"
 AUTHENTICATION_URL = "https://account.uipath.com/oauth/token"
 
 
@@ -26,7 +26,8 @@ def read_key():
 
 
 def authenticate():
-    headers = {"accept": "application/json", "X-UIPATH-TenantName": "default"}
+    headers = {"accept": "application/json",
+               "X-UIPATH-TenantName": f"{tanent}"}
     payload = {
         "grant_type": "refresh_token",
         "client_id": clientID,
@@ -50,7 +51,7 @@ def add_transaction(payload):
     headers = {
         "accept": "application/json",
         "Content-Type": "application/json",
-        "authorization": f"Bearer {key}",
+        "Authorization": f"Bearer {key}",
         "X-UIPATH-OrganizationUnitId": "1196313",
     }
     response = requests.post(url, headers=headers, data=payload)
