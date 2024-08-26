@@ -75,7 +75,7 @@ def get_folders():
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     jsonresponse = json.loads(response.text)
-    return jsonresponse
+    return jsonresponse['PageItems']
 
 
 # if __name__ == "__main__":

@@ -50,7 +50,7 @@ def getFiles(process):
                 continue
             payloaddata = {"itemData": {
                 "Name": process,
-                "Reference": file,
+                "Reference": file.upper().replace(".JSON", "").strip(),
                 "SpecificContent": data,
                 "Priority": "Normal",
             }}
@@ -133,12 +133,12 @@ def select_folder():
     folders = orchestratorApi.get_folders()
     foldernames = {}
     folderIds = {}
-    for index, folder in enumerate(folders):
+    for index, folder in enumerate(folders, start=1):
         foldernames[str(index)] = folder['DisplayName']
-        folderIds[folder['DispayName']] = folder['Id']
+        folderIds[folder['DisplayName']] = folder['Id']
     folderchoice = getInput(foldernames, "Select Folder", 0)
     if folderchoice in foldernames.keys():
-        return folderIds[foldernames[folderchoice]]
+        return str(folderIds[foldernames[folderchoice]])
     else:
         print("invalid input. please try again")
 
