@@ -91,6 +91,7 @@ def handle_input(choice: str, data: dict):
 
 
 def main():
+    folderId = select_folder()
     processdata, filedata, transationdata = load_data()
     print(transationdata)
     page = 1
@@ -119,13 +120,27 @@ def main():
                     payloadstr = json.dumps(transationdata[selection])
                     print(payloadstr)
                     # TODO: TEST: implement orchestrator functions here
-                    orchestratorApi.add_transaction(payloadstr)
+                    orchestratorApi.add_transaction(payloadstr, folderId)
                     time.sleep(2)
                 spinner.stop()
             elif selections == "back":
                 page = 1
             else:
                 message = selections
+
+
+def select_folder():
+    folders = orchestratorApi.get_folders()
+    foldernames = {}
+    folderIds = {}
+    for index, folder in enumerate(folders):
+        foldernames[str(index)] = folder['DisplayName']
+        folderIds[folder['DispayName']] = folder['Id']
+    folderchoice = getInput(foldernames, "Select Folder", 0)
+    if folderchoice in foldernames.keys():
+        return folderIds[foldernames[folderchoice]]
+    else:
+        print("invalid input. please try again")
 
 
 if __name__ == "__main__":

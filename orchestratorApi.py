@@ -11,8 +11,7 @@ tanent = os.getenv("TANENT")
 instanceName = os.getenv("INSTANCE_NAME")
 
 KEY_FILE = "key.pem"
-ORCHESTRATOR_URL = f"https://cloud.uipath.com/{
-    instanceName}/{tanent}/orchestrator_"
+ORCHESTRATOR_URL = f"https://cloud.uipath.com/{instanceName}/{tanent}/orchestrator_"
 AUTHENTICATION_URL = "https://account.uipath.com/oauth/token"
 
 
@@ -45,26 +44,38 @@ def authenticate():
         response.raise_for_status()
 
 
-def add_transaction(payload):
+def add_transaction(payload, folderId):
     key = read_key()
     url = f"{ORCHESTRATOR_URL}/odata/Queues/UiPathODataSvc.AddQueueItem"
     headers = {
         "accept": "application/json",
         "Content-Type": "application/json",
         "Authorization": f"Bearer {key}",
-        "X-UIPATH-OrganizationUnitId": "1196313",
+        "X-UIPATH-OrganizationUnitId": folderId,
     }
     response = requests.post(url, headers=headers, data=payload)
-    print(response)
-    print(response.reason)
-    print(response.raw)
     if response.status_code == 401:
         authenticate()
         key = read_key()
         response = requests.post(
-            ORCHESTRATOR_URL, headers=headers, data=payload)
-    response.raise_for_status()
+            url, headers=headers, data=payload)
+    elif response.status_code != 201:
+        print(response.reason)
+        print(response.content)
+        response.raise_for_status()
     return response.status_code
+
+
+def get_folders():
+    key = read_key()
+    url = f"{ORCHESTRATOR_URL}/api/Folders/GetAllForCurrentUser"
+    headers = {
+        "accept": "application/json",
+        "Authorization": f"Bearer {key}"}
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    jsonresponse = json.loads(response.text)
+    return jsonresponse
 
 
 # if __name__ == "__main__":
