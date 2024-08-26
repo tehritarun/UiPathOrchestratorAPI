@@ -12,7 +12,7 @@ instanceName = os.getenv("INSTANCE_NAME")
 
 KEY_FILE = "key.pem"
 ORCHESTRATOR_URL = f"https://cloud.uipath.com/{
-    instanceName}/{tanent}/ochestrator_"
+    instanceName}/{tanent}/orchestrator_"
 AUTHENTICATION_URL = "https://account.uipath.com/oauth/token"
 
 
