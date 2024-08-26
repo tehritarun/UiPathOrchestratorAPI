@@ -58,12 +58,12 @@ def add_transaction(payload):
     print(response)
     print(response.reason)
     print(response.raw)
-    print(response.raise_for_status())
     if response.status_code == 401:
         authenticate()
         key = read_key()
         response = requests.post(
             ORCHESTRATOR_URL, headers=headers, data=payload)
+    response.raise_for_status()
     return response.status_code
 
 
