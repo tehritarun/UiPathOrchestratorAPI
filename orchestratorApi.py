@@ -32,7 +32,6 @@ def authenticate():
         "client_id": clientID,
         "refresh_token": clientSecret,
     }
-    print(payload)
     response = requests.post(AUTHENTICATION_URL, headers=headers, data=payload)
     if response.status_code == 200:
         jsonresponse = json.loads(response.text)

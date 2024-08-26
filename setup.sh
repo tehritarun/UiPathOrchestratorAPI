@@ -25,3 +25,5 @@ echo USER_KEY=\""$client_secret"\" >> $envfilename
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+
+printf "#!/bin/bash\ncd $PWD\n" | cat - uipath.sh > temp && mv temp uipath.sh

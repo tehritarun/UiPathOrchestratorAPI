@@ -43,7 +43,6 @@ def getFiles(process):
 
             try:
                 with open(filename, 'r') as f:
-                    # TODO: TEST:add wrapper json for adding transaction body
                     data = json.load(f)
             except Exception as e:
                 process(e)
@@ -93,7 +92,6 @@ def handle_input(choice: str, data: dict):
 def main():
     folderId = select_folder()
     processdata, filedata, transationdata = load_data()
-    print(transationdata)
     page = 1
     message = "Select a process/queue"
     while True:
@@ -111,15 +109,11 @@ def main():
             choice = getInput(filedata[processChoice], message, page)
             # choice = filedata[processChoice][choice]
             selections = handle_input(choice, filedata[processChoice])
-            # TODO: TEST: implement multiple selection here
-            # TODO: TEST: implement special options here
             if type(selections) is list:
                 spinner = CLI_Spinner("Adding Transaction to queue", speed=0.1)
                 spinner.start()
                 for selection in selections:
                     payloadstr = json.dumps(transationdata[selection])
-                    print(payloadstr)
-                    # TODO: TEST: implement orchestrator functions here
                     orchestratorApi.add_transaction(payloadstr, folderId)
                     time.sleep(2)
                 spinner.stop()
@@ -141,6 +135,7 @@ def select_folder():
         return str(folderIds[foldernames[folderchoice]])
     else:
         print("invalid input. please try again")
+        exit(1)
 
 
 if __name__ == "__main__":
