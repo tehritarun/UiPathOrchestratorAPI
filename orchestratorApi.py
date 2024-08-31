@@ -65,20 +65,16 @@ def add_transaction(payload, folderId):
     return response.status_code
 
 
-def get_folders():
+def get_folders(retrycount: int = 0):
     key = read_key()
     url = f"{ORCHESTRATOR_URL}/api/Folders/GetAllForCurrentUser"
     headers = {
         "accept": "application/json",
         "Authorization": f"Bearer {key}"}
     response = requests.get(url, headers=headers)
+    if response.status_code != 200 and retrycount < 3:
+        authenticate()
+        return get_folders(retrycount+1)
     response.raise_for_status()
     jsonresponse = json.loads(response.text)
     return jsonresponse['PageItems']
-
-
-# if __name__ == "__main__":
-#     authenticate()
-#     sampledata = {'itemData': {'SpecificContent': {"field1": "Value1", "filed2": 'Value2'},
-#                                "Priority": "Normal", "Name": "TestAPIQueue", "Reference": "test"}}
-#     add_transaction(json.dumps(sampledata))
